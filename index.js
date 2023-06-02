@@ -12,6 +12,7 @@ const { nameSceneRenter,
   conditionSceneRenter,
 } = require('./scenes/scenes');
 require('dotenv').config()
+const { timeoutMiddleware } = require('./utils/utils');
 
 const app = express();
 const bot = new Telegraf(
@@ -19,20 +20,6 @@ const bot = new Telegraf(
   // '5967872751:AAFg344i9FEIlN5hSIJc1C3lXXheEve-SDg',
   { polling: true }
 );
-
-const timeOutScene = new Scenes.BaseScene('timeOutScene');
-timeOutScene.enter((ctx) => {
-  console.log('Enter to timeout scene');
-  ctx.session.timer = setTimeout(() => {
-    ctx.scene.leave();
-  }, 5 * 60 * 1000);
-});
-
-timeOutScene.leave((ctx) => {
-  console.log('Leave timeout scene');
-  clearTimeout(ctx.session.timer);
-});
-
 
 const completeSceneRenter = new Scenes.BaseScene('completeSceneRenter');
 completeSceneRenter.enter(ctx => {
@@ -61,9 +48,10 @@ const stage = new Scenes.Stage([
   childrenSceneRenter,
   conditionSceneRenter,
 ]);
+
 bot.use(session());
 bot.use(stage.middleware());
-bot.use(timeOutScene.middleware());
+bot.use(timeoutMiddleware(5 * 60 * 1000))
 
 bot.start((ctx) => {
   console.log(`${ctx.from.username || 'User'} start bot.`)
