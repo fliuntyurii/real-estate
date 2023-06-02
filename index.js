@@ -11,7 +11,6 @@ const { nameSceneRenter,
   childrenSceneRenter,
   conditionSceneRenter,
 } = require('./scenes/scenes');
-const { timeoutMiddleware } = require('./utils/utils');
 require('dotenv').config()
 
 const app = express();
@@ -48,10 +47,8 @@ const stage = new Scenes.Stage([
   childrenSceneRenter,
   conditionSceneRenter,
 ]);
-
 bot.use(session());
 bot.use(stage.middleware());
-bot.use(timeoutMiddleware(5 * 60 * 1000))
 
 bot.start((ctx) => {
   console.log(`${ctx.from.username || 'User'} start bot.`)
