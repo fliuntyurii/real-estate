@@ -16,7 +16,6 @@ require('dotenv').config()
 const app = express();
 const bot = new Telegraf(
   process.env.BOT_TOKEN,
-  // '5967872751:AAFg344i9FEIlN5hSIJc1C3lXXheEve-SDg',
   { polling: true }
 );
 bot.telegram.setWebhook(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/setWebhook`);
