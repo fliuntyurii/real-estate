@@ -20,6 +20,20 @@ const bot = new Telegraf(
   { polling: true }
 );
 
+const timeOutScene = new Scenes.BaseScene('timeOutScene');
+timeOutScene.enter((ctx) => {
+  console.log('Enter to timeout scene');
+  ctx.session.timer = setTimeout(() => {
+    ctx.scene.leave();
+  }, 5 * 60 * 1000);
+});
+
+timeOutScene.leave((ctx) => {
+  console.log('Leave timeout scene');
+  clearTimeout(ctx.session.timer);
+});
+
+
 const completeSceneRenter = new Scenes.BaseScene('completeSceneRenter');
 completeSceneRenter.enter(ctx => {
   const date = new Date().toJSON();
@@ -49,6 +63,7 @@ const stage = new Scenes.Stage([
 ]);
 bot.use(session());
 bot.use(stage.middleware());
+bot.use(timeOutScene.middleware());
 
 bot.start((ctx) => {
   console.log(`${ctx.from.username || 'User'} start bot.`)
