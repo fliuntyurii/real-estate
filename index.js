@@ -1,0 +1,83 @@
+const { Telegraf, Scenes, session } = require('telegraf');
+const { nameSceneRenter, 
+  ageSceneRenter, 
+  budgetSceneRenter, 
+  regionSceneRenter, 
+  contactSceneRenter, 
+  roomSceneRenter,
+  floorSceneRenter,
+  animalsSceneRenter,
+  childrenSceneRenter,
+  conditionSceneRenter,
+} = require('./scenes/scenes');
+require('dotenv').config()
+
+const commandToLeaveAnApplication = 'search';
+
+const bot = new Telegraf(
+  process.env.BOT_TOKEN,
+  // '5967872751:AAFg344i9FEIlN5hSIJc1C3lXXheEve-SDg',
+  { polling: true }
+);
+
+const completeSceneRenter = new Scenes.BaseScene('completeSceneRenter');
+completeSceneRenter.enter(ctx => {
+  const date = new Date().toJSON();
+  const day = date.split('T')[0];
+  const hour = date.split('T')[1].split('.')[0]
+
+  const { name, age, budget, region, contact, rooms, floor, animals, children, condition, username } = ctx.session;
+  const message = 
+    `Дані орендаря:\n\nІм'я: ${name}\nВік: ${age}\nРайон: ${region}\nБюджет: ${budget} UAH\nК-ть кімнат: ${rooms}\nПоверх: ${floor}\nТварини: ${animals}\nПроживатимуть: ${children}\nУмови: ${condition}\nНомер: ${contact}\nДата: ${day} ${hour}\n#пошук_оренди @${username}`;
+
+  bot.telegram.sendMessage(process.env.CHAT_ID, message);
+  ctx.scene.leave();
+});
+
+const stage = new Scenes.Stage([
+  nameSceneRenter,
+  ageSceneRenter, 
+  budgetSceneRenter, 
+  regionSceneRenter, 
+  contactSceneRenter, 
+  completeSceneRenter,
+  roomSceneRenter,
+  floorSceneRenter,
+  animalsSceneRenter,
+  childrenSceneRenter,
+  conditionSceneRenter,
+]);
+bot.use(session());
+bot.use(stage.middleware());
+
+bot.start((ctx) => {
+  ctx.reply(`Вас вітає команда з пошуку житла!\nЗалиште заявку і ми підберемо якомога швидше найкращий для Вас варіант.\n/${commandToLeaveAnApplication}`);
+});
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection:', reason);
+});
+
+bot.command(commandToLeaveAnApplication, ctx => {
+  const userId = ctx.from.id;
+
+  if (session[userId]) {
+    const lastUsageTime = session[userId].lastUsageTime;
+    const currentTime = Date.now();
+    const elapsedTime = currentTime - lastUsageTime;
+
+    if (elapsedTime < 15 * 60 * 1000) {
+      const remainingTime = Math.ceil((15 * 60 * 1000 - elapsedTime) / (60 * 1000));
+      ctx.reply(`Ви можете використовувати команду /${commandToLeaveAnApplication} через ${remainingTime} хвилин.`);
+      return;
+    }
+  }
+
+  session[userId] = {
+    lastUsageTime: Date.now(),
+  };
+
+  ctx.scene.enter('nameSceneRenter');
+});
+
+bot.launch();
