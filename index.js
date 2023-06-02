@@ -1,4 +1,5 @@
 const { Telegraf, Scenes, session } = require('telegraf');
+const express = require('express');
 const { nameSceneRenter, 
   ageSceneRenter, 
   budgetSceneRenter, 
@@ -13,7 +14,7 @@ const { nameSceneRenter,
 require('dotenv').config()
 
 const commandToLeaveAnApplication = 'search';
-
+const app = express();
 const bot = new Telegraf(
   process.env.BOT_TOKEN,
   // '5967872751:AAFg344i9FEIlN5hSIJc1C3lXXheEve-SDg',
@@ -81,3 +82,6 @@ bot.command(commandToLeaveAnApplication, ctx => {
 });
 
 bot.launch();
+app.listen(process.env.PORT, () => {
+  console.log(`Server is running on port ${process.env.PORT}`);
+});
