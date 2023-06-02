@@ -19,6 +19,7 @@ const bot = new Telegraf(
   // '5967872751:AAFg344i9FEIlN5hSIJc1C3lXXheEve-SDg',
   { polling: true }
 );
+bot.telegram.setWebhook(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/setWebhook`);
 
 const completeSceneRenter = new Scenes.BaseScene('completeSceneRenter');
 completeSceneRenter.enter(ctx => {
