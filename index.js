@@ -21,6 +21,12 @@ const bot = new Telegraf(
 );
 bot.telegram.setWebhook(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/setWebhook`);
 
+bot.startWebhook(`/bot${process.env.BOT_TOKEN}/setWebhook`, null, process.env.PORT || 3000);
+bot.catch((err) => {
+  console.error('Помилка в боті:', err);
+});
+bot.startPolling();
+
 const completeSceneRenter = new Scenes.BaseScene('completeSceneRenter');
 completeSceneRenter.enter(ctx => {
   const date = new Date().toJSON();
