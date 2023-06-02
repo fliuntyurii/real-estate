@@ -1,4 +1,4 @@
-const timeoutMiddleware = (timeoutDuration) => (ctx, next) => {
+export const timeoutMiddleware = (timeoutDuration) => (ctx, next) => {
   if (ctx.session && ctx.session.lastInteraction) {
     clearTimeout(ctx.session.timer);
     console.log('Таймер сцени запустився.');

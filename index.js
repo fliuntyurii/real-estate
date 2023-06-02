@@ -11,8 +11,8 @@ const { nameSceneRenter,
   childrenSceneRenter,
   conditionSceneRenter,
 } = require('./scenes/scenes');
-require('dotenv').config()
 const { timeoutMiddleware } = require('./utils/utils');
+require('dotenv').config()
 
 const app = express();
 const bot = new Telegraf(
