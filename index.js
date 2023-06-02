@@ -51,6 +51,7 @@ bot.use(session());
 bot.use(stage.middleware());
 
 bot.start((ctx) => {
+  console.log(`${ctx.from.username || 'User'} start bot.`)
   ctx.scene.leave();
   ctx.reply(`Вас вітає команда з пошуку житла!\nЗалиште заявку і ми підберемо якомога швидше найкращий для Вас варіант.\n/search`);
 });
@@ -62,6 +63,7 @@ process.on('unhandledRejection', (reason, promise) => {
 bot.command('search', ctx => {
   ctx.scene.leave();
   const userId = ctx.from.id;
+  console.log(`${ctx.from.username || 'User'} search.`)
 
   if (session[userId]) {
     const lastUsageTime = session[userId].lastUsageTime;
