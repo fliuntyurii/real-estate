@@ -13,7 +13,6 @@ const { nameSceneRenter,
 } = require('./scenes/scenes');
 require('dotenv').config()
 
-const commandToLeaveAnApplication = 'search';
 const app = express();
 const bot = new Telegraf(
   process.env.BOT_TOKEN,
@@ -52,14 +51,16 @@ bot.use(session());
 bot.use(stage.middleware());
 
 bot.start((ctx) => {
-  ctx.reply(`Вас вітає команда з пошуку житла!\nЗалиште заявку і ми підберемо якомога швидше найкращий для Вас варіант.\n/${commandToLeaveAnApplication}`);
+  ctx.scene.leave();
+  ctx.reply(`Вас вітає команда з пошуку житла!\nЗалиште заявку і ми підберемо якомога швидше найкращий для Вас варіант.\n/search`);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('Unhandled Rejection:', reason);
 });
 
-bot.command(commandToLeaveAnApplication, ctx => {
+bot.command('search', ctx => {
+  ctx.scene.leave();
   const userId = ctx.from.id;
 
   if (session[userId]) {
@@ -69,7 +70,7 @@ bot.command(commandToLeaveAnApplication, ctx => {
 
     if (elapsedTime < 15 * 60 * 1000) {
       const remainingTime = Math.ceil((15 * 60 * 1000 - elapsedTime) / (60 * 1000));
-      ctx.reply(`Ви можете використовувати команду /${commandToLeaveAnApplication} через ${remainingTime} хвилин.`);
+      ctx.reply(`Ви можете використовувати команду /search через ${remainingTime} хвилин.`);
       return;
     }
   }
