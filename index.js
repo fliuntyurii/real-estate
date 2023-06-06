@@ -18,7 +18,6 @@ const bot = new Telegraf(
   process.env.BOT_TOKEN,
   { polling: true }
 );
-bot.telegram.setWebhook(`https://api.telegram.org/bot${process.env.BOT_TOKEN}/setWebhook`);
 
 const completeSceneRenter = new Scenes.BaseScene('completeSceneRenter');
 completeSceneRenter.enter(ctx => {
